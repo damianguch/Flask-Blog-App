@@ -1,26 +1,7 @@
-from flask import Flask, render_template, url_for, flash, redirect
-from forms import RegistrationForm, LoginForm
-from flask_sqlalchemy import SQLAlchemy
-import email_validator
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = '5a67bfd67fea43b949e138e4048bf192'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-
-db = SQLAlchemy(app)
-
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False,
-                           default='default.jpg')
-    password = db.Column(db.String(20), nullable=False)
-
-    def __repr__(self):
-        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
-
+from flask import render_template, url_for, flash, redirect
+from flaskblog.forms import RegistrationForm, LoginForm
+from flaskblog.models import User, Post
+from flaskblog import app
 
 posts = [
     {
@@ -34,6 +15,12 @@ posts = [
         'author': 'Jane Doe',
         'title': 'Blog Post 2',
         'content': 'Second post content',
+        'date_posted': 'March 29, 2024'
+    },
+    {
+        'author': 'Smith Gray',
+        'title': 'Flask Tutorial',
+        'content': 'Fundamentals of Flask Aplications',
         'date_posted': 'March 29, 2024'
     }
 ]
@@ -68,7 +55,3 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email or password', 'danger')
     return render_template('login.html', title='Login', form=form)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
